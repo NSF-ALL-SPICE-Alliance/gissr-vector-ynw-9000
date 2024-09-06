@@ -1,0 +1,281 @@
+---
+title: "Week 4: Mapping Biodiversity with iNaturalist"
+author: "Catherine Brockway"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly
+    toc: TRUE
+    toc_float: TRUE
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("vembedr")
+```
+
+<img src="`r here::here('Images/ALL-SPICE.png')`" width="240" /> <img src="`r here::here('Images/3_CIFAL.png')`" width="200" />
+
+## Introduction to iNaturalist
+
+iNaturalist is a global, online community of citizen scientists who are mapping the biodiversity of our world. The best part is: the data is available for free and it is all geolocated!
+
+Check out the home page of [iNaturalist](https://www.inaturalist.org/) for a brief introduction to this citizen science project. 
+
+Watch the videos below to get an idea of how iNaturalist works, and how you can use it.
+
+[Observe Nature with iNaturalist](https://www.youtube.com/watch?v=Mb_i-WoUKt0)
+
+```{r}
+embed_url("https://www.youtube.com/watch?v=Mb_i-WoUKt0")
+```
+
+[Identify Nature with iNaturalist](https://www.youtube.com/watch?v=ap1aLIVbxh8)
+```{r}
+embed_url("https://www.youtube.com/watch?v=ap1aLIVbxh8")
+```
+
+[Seven reasons to contribute to iNaturalist as an identifier](https://www.youtube.com/watch?v=YM8D63h35LM)
+```{r}
+embed_url("https://www.youtube.com/watch?v=YM8D63h35LM")
+```
+
+
+## GIS and iNaturalist for Sustainability and Resilience
+
+Watch the videos below for examples of how iNaturalist data has been used for sustainability and resilience. Start thinking about how you could use it for your final project. 
+
+[iNaturalist in ecological research & applications for the 2020 ESA annual meeting](https://www.youtube.com/watch?v=F1qedUYwNvY&list=PLduYc6-ie4l11RvwDvDYqF4iX0lVCckfx&index=2)
+```{r}
+embed_url("https://www.youtube.com/watch?v=F1qedUYwNvY&list=PLduYc6-ie4l11RvwDvDYqF4iX0lVCckfx&index=2")
+```
+
+[How iNat Data Were Used to Study Biodiversity of Redlined Districts in California](https://www.youtube.com/watch?v=gxpx7kwCVTQ)
+```{r}
+embed_url("https://www.youtube.com/watch?v=gxpx7kwCVTQ")
+```
+
+# Assignment: iNaturalist data with tutorial
+
+iNaturalist is a wonderful tool that helps bridge the gap between citizen scientists and research scientists. When iNaturalist observers take high quality photographs of taxa, upload them with geodata, and include relevant notes, these data can then be used in a multitude of studies such examining biodiversity, monitoring endangered species, understanding species hybridization, tracking invasive species, etc.
+
+
+First, load the necessary libraries:
+```{r}
+library(rinat)
+library(sf)
+library(tidyverse)
+library(tmap)
+library(leaflet)
+library(osmdata)
+library(plotly)
+
+```
+
+Next, let's choose a single genus (group of related species) to focus on for now. Let's find out about the Chaminade University mascot: the Silversword, or ʻĀhinahina in the Hawaiian language. 
+
+First, go to https://www.inaturalist.org/. Click on the tab at the top labeled "Explore". Then, in the search box labeled "Species", type in "Silverswords" and click on the "Silverswords, Genus Argyroxiphium" selection that pops up. Then in the "Location" search box, type in "Maui County" and choose the selection that pops up: "Maui County, HI, USA". That should take you to this page: https://www.inaturalist.org/observations?place_id=1607&taxon_id=68284 
+
+This page tells us how many observations have been made of the genus (1,237 when I checked), how many species of the genus are present, and how many users have made identifications and observations. You can also see all of the observations and the beautiful pictures!
+
+The other important thing to note, is that the URL for this page includes some key information for our data retrieval purposes: the "place_id" and "taxon id". You can see at the end of the URL that the place id for Maui is "1607" and the taxon id for Silverswords is 68284 (`place_id=1607&taxon_id=68284`).
+
+Now that we have a place id and a taxon id, we can retrieve data for Silverswords on the island of Maui. 
+
+But before we do that, let's talk about data retrieval etiquette. 
+
+## Data retrieval etiquette
+
+Data retrieval (or data downloading) using an API is an amazing feature of modern data science, but we shouldn't take it for granted. The API will "throttle", or slow down, your downloading, or even block your IP address if you download too much, too quickly. 
+
+The non-profit that supports iNaturalist doesn’t charge for downloading data, because they believe in open data and supporting citizen science initiatives. They also don’t require registration for simply downloading observations. That being said, downloading data consumes resources that can affect other users, and it’s bad form (and bad programming) to download data unnecessarily.
+
+There are a few best practices for downloading data in ways that won’t cause problems for other users:
+
+-Use the server-side filters the API provides to only return results for your area of interest and your taxon(s) of interest. See below for examples of sending spatial areas and a taxon name when calling the API from R.
+
+-Always save your results to disk, and don’t download data more than once. Your code should check to see if you’ve already downloaded something before getting it again.
+
+-Don’t download more than you need. The API will throttle you (reduce your download speed) if you exceed more than [100 calls per minute](https://api.inaturalist.org/v1/docs/). Spread it out. 
+
+-The API is not designed for bulk downloads. For that, look at the Export tool (requires a user account and sign in).
+
+## Retrieve iNaturalist data
+
+Now we are ready to retrieve iNaturalist observations. The `rinat` package makes this easy with the `get_inat_obs()`. If you skipped the previous section on data retrieval etiquette, go back and read it before you proceed!
+
+```{r}
+  # Note we have to rearrange the coordinates of the bounding box a little bit 
+  # to give get_inat_obs() what it expects
+inat_obs_df <- get_inat_obs(taxon_id = 68284, #taxon id from URL
+                            place_id = 1607, #place id from URL
+                            quality = "research", #specifies research grade only
+                            geo = TRUE, #Specifies that we want geocoordinates
+                            maxresults = 100) #Limits results
+
+save(inat_obs_df, file = "maui_silverswords_inat.Rdata")
+```
+
+
+```{r}
+inat_obs_sf <-  inat_obs_df %>% 
+  select(longitude, latitude, datetime, common_name, scientific_name, image_url, user_login) %>% 
+  st_as_sf(coords=c("longitude", "latitude"), crs=4326)
+
+dim(inat_obs_sf)
+```
+Let's check to see that our `inat_obs_sf` object was created and that we can map the data. Let's add in some symbology to check that we have all the species in the genus, by assigning `color` to `common_name`. 
+
+```{r}
+ggplot() +
+  geom_point(data = inat_obs_df, aes(x = longitude, y = latitude, color = common_name, text = common_name)) 
+```
+
+Okay, so our data is showing up (at the appropriate lat/long), and we have a legend that shows different colors for different species. But now we need to turn it into a map that people can read, by adding contextual information. Let's use what we have learned in previous lessons to add contextual data from OpenStreetMap. 
+
+First let's create our bounding box for the island of Maui. 
+
+Next, let's choose our location and create a bounding box. Let's explore Maui. We can use the `osmdata` package function `getbb()` to get the bounding box. 
+
+```{r}
+maui_bb <- getbb("Maui")
+maui_bb 
+```
+
+In the code below, we are creating data objects that we will use as layers on our map. Let's create layers of large streets, small streets and paths, the coastline, the national park, and other protected areas. 
+```{r}
+# retrieving data of streets on Maui
+maui_streets <- maui_bb %>%
+  opq() %>%
+  add_osm_feature("highway", c("motorway", "primary", "secondary", "tertiary")) %>%
+  osmdata_sf()
+
+# retrieving data of small streets on Maui
+maui_small_streets <- maui_bb %>%
+  opq() %>%
+  add_osm_feature(key = "highway", value = c("residential", "living_street", "unclassified", "service", "footway")) %>%
+  osmdata_sf()
+
+# retrieving data of coastline on Maui
+maui_coast <- maui_bb %>%
+  opq() %>%
+  add_osm_feature(key = "natural", value = "coastline") %>%
+  osmdata_sf()
+
+
+# retrieving data of national park on Maui
+maui_np <- maui_bb %>%
+  opq() %>%
+  add_osm_feature(key = "boundary", value = "national_park") %>%
+  osmdata_sf()
+
+# retrieving data of protected areas on Maui
+maui_protected <- maui_bb %>%
+  opq() %>%
+  add_osm_feature(key = "boundary", value = "protected_area") %>%
+  osmdata_sf()
+```
+
+Now let's create a map with all of our data. We are going to assign this map to the object `p`, because we are going to use it for a couple of different maps. 
+
+```{r}
+# visualising all retrieved features over each other to form a map of Maui
+p <- ggplot() +
+  geom_sf(data = maui_streets$osm_lines, inherit.aes = FALSE, color = "#ffbe7f", size = .4, alpha = .8) +
+  geom_sf(data = maui_small_streets$osm_lines, inherit.aes = FALSE, color = "#a6a6a6", size = .2, alpha = .8) +
+  geom_sf(data = maui_coast$osm_lines, inherit.aes = FALSE, color = "black", size = .8, alpha = .5) +
+  geom_sf(data = maui_np$osm_polygons, inherit.aes = FALSE, color = "brown", size = .2, alpha = .8) +
+  geom_sf(data = maui_protected$osm_polygons, inherit.aes = FALSE, color = "green", size = .2, alpha = .8) +
+  geom_point(data = inat_obs_df, aes(x = longitude, y = latitude, color = common_name, text = common_name)) + # here is our iNaturalist data
+  geom_sf_text(size = 1, data = maui_protected$osm_polygons, aes(label = name)) + #here we are adding some labels for our protected areas for context 
+  coord_sf(xlim = c(-156.69726, -155.97909), ylim = c(20.57443, 21.03156), expand = TRUE) + # setting the limits of our map based on the lat/long we got from our OSM bounding box
+  ggtitle("Silverswords on Maui", subtitle = "Based on iNaturalist Data as of September 2024") +
+  theme_bw() +
+  labs(
+    color="Common Name", #this changes the title of our legend
+    x = "Longitude",
+    y = "Latitude"
+  ) 
+p
+```
+Great! We made a map of our data that gives the reader some context. One thing to note: the Haleakalā National Park is missing from our map! If we look at our `maui_np` object, we can see that we didn't get any data in our `osm_polygons` dataset. It also doesn't show up in our `protected_area` dataset. This means that it has not been added to OpenStreetMap yet. 
+
+This is a great example of one of the limitations of the OpenStreetMap dataset. Just because something isn't in our dataset, doesn't mean it isn't there! 
+
+For our purposes, we can still move forward because we are just learning and exploring. If you were making this map for work or for school, you would want to find another source for the data, or add it to OpenStreetMap yourself. 
+
+What can we learn from this map? Are most of the silversword observations in protected areas or outside of them? Are they in rural areas or urban (hint: look at where most of the roads are)?
+
+
+```{r}
+
+ggplotly(p,
+         tooltip = c("text"))
+
+```
+## Create an interactive map
+
+## Interactive map
+
+We can use the `leaflet` package to visualize an interactive map of the Silverswords on Maui. We can even customize what shows up when we click on a data point to include things like the photos associated with the records. The code chunk below customizes the data to include in the pop-up:
+
+```{r}
+inat_obs_popup_sf <- inat_obs_sf %>% 
+  mutate(popup_html = paste0("<p><b>", common_name, "</b><br/>",
+                             "<i>", scientific_name, "</i></p>",
+                             "<p>Observed: ", datetime, "<br/>",
+                             "User: ", user_login, "</p>",
+                             "<p><img src='", image_url, "' style='width:100%;'/></p>")
+  )
+```
+
+The code chunk below creates a title for our map, and adds some formatting to our pop-ups.
+
+```{r}
+htmltools::p("iNaturalist Observations of Silverswords on Maui Island",
+             htmltools::br(),
+             inat_obs_popup_sf$datetime %>% 
+               as.Date() %>% 
+               range(na.rm = TRUE) %>% 
+               paste(collapse = " to "),
+             style = "font-weight:bold; font-size:110%;")
+```
+
+And here is where we create the map, using our `inat_obs_sf` dataframe and the `inat_obs_popup_sf` dataframe we created for our pop-up labels. 
+
+```{r}
+leaflet(inat_obs_sf) %>% 
+  setView(lng = -156.3, lat = 20.7, zoom = 12)%>%
+  addTiles() %>% 
+  addCircleMarkers(data = inat_obs_popup_sf,
+                   popup = ~popup_html, 
+                   radius = 5)
+```
+
+For your challenges this week, create the necessary code chunks below. You can copy/paste the code chunks from the tutorial and edit them as needed to complete the Challenges. 
+
+**Challenge 1: Find the `place_id` that corresponds to your target area and choose a genus or species you want to map and find the `taxon_id`.**
+
+**Challenge 2: Create a static map using the `ggplot` function of your target area and target genus/species.**
+
+**Challenge 3: Create an interactive map using the `leaflet` function of your target area and target genus/species.** 
+
+
+# Final Challenge Preparation
+
+Explore the data available in iNaturalist for your chosen location. What data would be relevant to topics you want to focus on? Do you want to look at a particular species, maybe one that is endangered or invasive or culturally significant? Do you want to focus on the diversity of birds, or fungus? Try to create a draft map or two for your challenge location and topics. 
+
+# More resources
+
+The resources in this section are not required for this course! They are provided in case you want to learn more. Feel free to come back to them after you finish the course.
+
+How to use iNaturalist's Search URLs (Wiki), [Part 1](https://forum.inaturalist.org/t/how-to-use-inaturalists-search-urls-wiki-part-1-of-2/63) and [Part 2](https://forum.inaturalist.org/t/how-to-use-inaturalists-search-urls-wiki-part-2-of-2/18792)
+
+Guide to [Interactive web-based data visualization with R, plotly, and shiny](https://plotly-r.com/)
+
+## More tutorials
+
+[Mapping iNaturalist Data in R](https://ucanr-igis.github.io/tech_notes/inaturalist_map.html)
+
+[Mapping with iNat: Tutorial for the Uehling Lab](https://rpubs.com/mswiseman/iNat)

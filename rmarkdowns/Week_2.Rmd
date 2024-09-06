@@ -1,0 +1,244 @@
+---
+title: "Week 2: Maps with Multiple Layers"
+author: "Catherine Brockway"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly
+    toc: TRUE
+    toc_float: TRUE
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("vembedr")
+```
+
+<img src="`r here::here('Images/ALL-SPICE.png')`" width="240" /> <img src="`r here::here('Images/3_CIFAL.png')`" width="200" />
+
+## GIS Concepts
+
+Please read the following short chapter in the free, online textbook *Intro to GIS and Spatial Analysis* by Manuel Gimond. Write down any questions you have and bring them to office hours to discuss. 
+
+[Chapter 4 Symbolizing Features](https://mgimond.github.io/Spatial/symbolizing-features.html)
+
+[Chapter 5 Statistical Maps](https://mgimond.github.io/Spatial/statistical-maps.html)
+
+[Chapter 6 Pitfalls to Avoid](https://mgimond.github.io/Spatial/pitfalls-to-avoid.html)
+
+[Chapter 5 Good Map Making Tips](https://mgimond.github.io/Spatial/good-map-making-tips.html)
+
+Refer back to these chapters as you create your maps throughout the rest of the course. 
+
+# Assignment: Locator Map Tutorial
+
+This week we will learn how to make a "locator map", that highlights an area in a larger region to help the audience understand the context of a region. You will create one like this for your final project to highlight the area you are focusing on. 
+
+This week we will continue using the Natural Earth dataset, but we will begin building maps with multiple layers. 
+
+Packages required for this tutorial:
+
+- `tidyverse` (which includes `ggplot2`, more info available [here](https://www.tidyverse.org/))
+
+- `sf` (more info available [here](https://r-spatial.github.io/sf/index.html) and [here](https://r-spatial.github.io/sf/articles/sf1.html))
+
+- `rnaturalearth` (more info available[here](https://docs.ropensci.org/rnaturalearth/articles/rnaturalearth.html))
+
+- `rnaturalearthdata` (this provides more data, and higher resolution data)
+
+- `rnaturalearthhires` (this provides the highest resolution data, which is best for mapping small areas)
+
+You should have all these packages installed from last week, so you just need to load them for this session by running the code chunk below.  
+
+```{r}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(rnaturalearthhires)
+```
+
+Let's also go ahead and recreate the `world` dataframe that we used last week. 
+
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+```
+
+## Make your first regional map
+
+Now let's start thinking about the area of the world you want to focus on for your project (your target area). I am thinking about moving somewhere in Washington (state), USA in the next couple of years, so I will be focusing on that area so that I can learn more about it. 
+
+Choose state/province/region/island that you want to focus on for your final project. 
+
+We can create a "bounding box" for our existing `world` dataset that will "zoom in" to the general area around our target area. First, you need to decide what the boundaries of your map will be. [Google Earth](https://earth.google.com/web/) is a good tool to find latitudes and longitudes. Make sure you are making the bounding box big enough that you can see the whole region around your target area.
+
+**Challenge 1: Create a bounding box for your region**. This should be the region around the your target area. 
+
+```{r}
+ggplot(data = world) +
+    geom_sf() +
+    coord_sf(xlim = c(-130, -110), ylim = c(40, 50), expand = FALSE) +
+    ggtitle("Pacific Northwest of the United States")+
+    theme_void()
+
+```
+
+This gives us a very simple map which doesn't provide much information. We will need to add more data layers to make the map more meaningful.
+
+Let's create a layer that includes state/province level data. 
+
+**Challenge 2: Create a new layer with state/province data for your the country of your final project area**. 
+
+```{r}
+states <- (ne_states(country = "United States of America"))
+```
+
+Now we can add this layer to our existing map with a second `geom_sf`. 
+
+**Challenge 3: Add your new "state" layer to the map.**
+
+```{r}
+ggplot() +
+    geom_sf(data = world) +
+    geom_sf(data = states) +
+    coord_sf(xlim = c(-130, -110), ylim = c(40, 50), expand = FALSE) +
+    ggtitle("Pacific Northwest of the United States")+
+    theme_void()
+
+```
+
+To see what other cultural/political features are available, use the function `df_layers_cultural`. 
+
+```{r}
+df_layers_cultural
+```
+
+For example, you may want to use the `admin_0_pacific_groupings` data if you are focused on Pacific islands. 
+
+```{r}
+pacific_groups <- ne_download(
+  scale = 50,
+  type = "admin_0_pacific_groupings"
+)
+```
+
+Here is an example map focused on the Solomon Islands. 
+```{r}
+ggplot() +
+  geom_sf(data = pacific_groups)+
+  geom_sf(data = world) +
+  geom_sf_text(data = world, aes(label = admin))+
+coord_sf(crs = "+proj=ortho +lat_0=0 +lon_0=-160 ") +
+  coord_sf(xlim = c(145, 175), ylim = c(-20, 5), expand = FALSE) +
+  ggtitle("Solomon Islands", subtitle = "Showing Pacific Island Groupings")+
+  theme_void()
+```
+
+
+Now let's add some physical features, like major lakes and rivers.
+
+```{r}
+# lakes
+lakes50 <- ne_download(
+  scale = 50, 
+  type = "lakes", 
+  category = "physical")
+
+# rivers
+rivers50 <- ne_download(
+  scale = 50,
+  type = "rivers_lake_centerlines",
+  category = "physical",
+  returnclass = "sf"
+)
+
+```
+
+Now let's add the lakes and rivers to our map. 
+
+**Challenge 4: Update the `coord_sf` with your bounding box and your `ggtitle` with your own title.** The `states` layer should also now be updated with your new `states` dataframe you created in Challenge 2. 
+
+```{r}
+ggplot() +
+    geom_sf(data = world) +
+    geom_sf(data = states) +
+    geom_sf(data = lakes50) +
+    geom_sf(data = rivers50) +
+    coord_sf(xlim = c(-130, -110), ylim = c(40, 50), expand = FALSE) +
+    ggtitle("Pacific Northwest Region of the United States")+
+    theme_void()
+
+```
+
+Now let's choose colors for all of our layers, and add some labels from the `states` layer with a `geom_text` layer. 
+
+**Challenge 5: Update the `coord_sf` with your bounding box and your `ggtitle` with your own title. Change at least one of the colors in the `ggplot` code**. You can use color names like I have here, or you can specify a color using the hex code.
+
+```{r}
+ggplot() +
+    geom_sf(data = world, fill = "lightgray") +
+    geom_sf(data = states, fill = "antiquewhite1", size = 0.25) +
+    geom_sf(data = lakes50, fill = "darkblue", color = "black") +
+    geom_sf(data = rivers50, color = "lightblue", size = 0.15) +
+    geom_sf_text(data = states, aes(label = name), size = 5, fontface = "bold", nudge_y = states$nudge_y) +
+    coord_sf(xlim = c(-130, -110), ylim = c(40, 50), expand = FALSE) +
+    ggtitle("Pacific Northwest Region of the United States")+
+    theme_void()
+
+```
+
+For our final addition, let's highlight the specific area we will be focusing on. To do this, we will create a new layer that only includes the state (or province) where we will focus on for our project. 
+
+**Challenge 6: Update the name of the state/province that you are focused on for your project.** Remember to change the name of the data object (to the left of the `<-`) to your target area. 
+
+```{r}
+washington <- states %>%
+  filter(name == "Washington")
+```
+
+Now let's add that as a layer (the last `geom_sf` in our code) on our map, use the same fill color as the other states, and color the border red. We want this layer to be on top of the other layers on our map, so it should come after (below) the other `geom_sf` lines of our code. The order of our layers is very important!
+
+**Challenge 7: Update the code below with all of your changes.** You should be changing at least one color, the name of the data object with your target area (in the fifth `geom_sf`), the bounding box, and the title and subtitle. 
+
+```{r}
+ggplot() +
+    geom_sf(data = world, fill = "lightgray") +
+    geom_sf(data = states, fill = "antiquewhite1", size = 0.25) +
+    geom_sf(data = lakes50, fill = "darkblue", color = "black") +
+    geom_sf(data = rivers50, color = "lightblue", size = 0.15) +
+    geom_sf(data = washington, fill = "antiquewhite2", color = "red")+
+    geom_text(data = states, aes(x = longitude, y = latitude, label = name), size = 5, fontface = "bold", nudge_y = states$nudge_y) +
+    coord_sf(xlim = c(-130, -110), ylim = c(40, 50), expand = FALSE) +
+    ggtitle("Washington State", subtitle = "in the Pacific Northwest Region of the United States")+
+    theme_void()
+
+```
+
+# Final Challenge Preparation
+
+Think about what kinds of data you want to include in your locator map for your final project. Check out the Natural Earth [features](https://www.naturalearthdata.com/features/) to see what is available, and try to retrieve the data and add different layers to your map. You can also remove the lakes and rivers layers if you want. You can go ahead and add your locator map draft to your Final_Challenge.rmd.
+
+
+# More resources
+
+The resources in this section are not required for this course! They are provided in case you want to learn more. Feel free to come back to them after you finish the course.
+
+[Locator Map, Wikipedia](https://en.wikipedia.org/wiki/Locator_map)
+
+In this course, we are focused on retrieving spatial data using APIs and assigning them as dataframes and `sf` objects. However, there is a ton of data out there that isn't easily accessed using APIs. This data needs to be downloaded directly from a data source onto your computer, and then "loaded" or "read" in to R. At some point in your GIS journey, you will want to become familiar with different spatial file types, and how to load them into R to work with them. 
+
+[The Ultimate List of GIS Formats and Geospatial File Extensions](https://gisgeography.com/gis-formats/)
+
+[GIS File Formats](https://library.carleton.ca/guides/help/gis-file-formats)
+
+[Reading and writing spatial data in R](https://mgimond.github.io/Spatial/reading-and-writing-spatial-data-in-r.html)
+
+Although we are not covering spatial analysis in this course, at some point you should learn about what kinds of spatial analysis are possible, and what kinds of questions they can answer. Here are some helpful resources when you are ready for them:
+
+This textbook is old, so the code they are using is likely not the best option these days, but the book is still very helpful for understanding the major methods of data analysis. [Spatial Analysis with R](http://gis.humboldt.edu/OLM/r/Spatial%20Analysis%20With%20R.pdf)
+
+This resource is more up-to-date, and mostly focuses on spatial analysis of raster data using the `terra` package. [Spatial Data Science with R and `terra`](http://gis.humboldt.edu/OLM/r/Spatial%20Analysis%20With%20R.pdf)
+
+This chapter is focused on some basic vector data analysis. [Intro to spatial analysis in R: Vector Data](https://doi90.github.io/EE_Intro_Spatial_Workshop/vector-data.html)

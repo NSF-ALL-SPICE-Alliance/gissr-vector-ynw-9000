@@ -1,0 +1,139 @@
+---
+title: "Course Introduction: GIS for Sustainability and Resilience, Vector Techniques in R"
+author: "Catherine Brockway"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly
+    toc: TRUE
+    toc_float: TRUE
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("vembedr")
+```
+
+<img src="`r here::here('Images/ALL-SPICE.png')`" width="240" /> <img src="`r here::here('Images/3_CIFAL.png')`" width="200" />
+
+# Welcome
+
+Hello and welcome to the course "GIS for Sustainability and Resilience, Vector Techniques", an introduction to mapping techniques in R with a focus on data related to sustainability and resilience. This course does not require any previous knowledge or experience with R, GIS software, or with sustainability and resilience concepts. However the course is designed to be useful to those with a background in one or more of these areas.
+
+# Course Schedule
+
+Office hours (on Zoom, link sent in email):
+
+(Dates and times in Hawaiʻi Standard Time)
+
+- Tuesdays 11am-12pm
+
+- Wednesdays 7-9am
+
+- Thursdays 9-10am
+
+## Week 0: Course Intro and Software Set-up
+
+Please read this entire page and complete the Assignment at the end of this page to get your software set up, including RStudio and GitHub. 
+
+Assignments due: Before you start Week 1
+
+## Week 1: Introduction to Concepts and Techniques
+
+This week we will learn a lot about how GIS can be used for sustainability and resilience, and learn some fundamental concepts of working with geospatial data. The first assignment will help you get started using R and RStudio. The second assignment will teach you how to make world maps with different projections and centers.
+
+*Assignment due*: Sunday, September 15, 11:59 pm Hawaiʻi Standard Time
+
+## Week 2: Maps with Multiple Layers
+
+This week we will make maps with multiple layers of spatial data, and will create a "locator map" of the area you are working on for your final Challenge Project. 
+
+*Assignment due*: Sunday, September 22, 11:59 pm Hawaiʻi Standard Time
+
+## Week 3: Mapping with OpenStreetMap Data
+
+This week we will focus on creating more complex maps, and learn how to retrieve data from the OpenStreetMap database. 
+
+*Assignment due*: Sunday, September 29, 11:59 pm Hawaiʻi Standard Time
+
+## Week 4: Mapping Biodiversity with iNaturalist
+
+This week we will learn how to retrieve data from iNaturalist, and learn how to combine it with data from OpenStreetMap.
+
+*Assignment due*: Sunday, October 6, 11:59 pm Hawaiʻi Standard Time
+
+## Weeks 5/6: Challenge Project
+
+The last two weeks are dedicated to your final Challenge Project. I recommend reading about your Challenge Project as soon as possible so you can work on it as you learn new skills in the first four weeks. 
+
+*Challenge Project due*: Sunday, October 20, 11:59 pm Hawaiʻi Standard Time
+
+
+# How the course works
+
+Participants in this course will be expected to spend about 10 hours per week completing the required readings, tutorials and projects. The first four weeks of the course we'll focus on getting started with RStudio and GitHub, learning the basics spatial data visualization using R, and understanding fundamental principles of cartographic design. The final two weeks of the course will be dedicated to producing an individual project showcasing your geospatial abilities and skills. The challenge project we'll focus on a geographic area and data topics of your choice.
+
+This course is self-paced, but it is important to keep up with each week's assignments so that you are prepared for the final challenge project and can complete it by the end of the course. Please take advantage of the weekly working sessions available with the instructor in which you can ask questions, get help with troubleshooting Your code, And work with the instructor to develop your challenge project ideas.
+
+# What we will learn
+
+The learning objectives for this course are:
+
+- Explore how GIS can be used to advocate for sustainability and resilience
+
+- Use R, RStudio, and GitHub to create and share clean reproducible code
+
+- Create maps using multiple layers of vector data
+
+- Create clear and compelling spatial data visualizations
+
+- Use APIs to download relevant environmental and social data
+
+
+This course is designed as an introduction to GIS for sustainability and resilience, RStudio and GitHub, and spatial data visualization. We will not be covering spatial analysis, raster (image) data, or advanced techniques. However, by the end of the course, you will be able to retrieve data and make maps, have a good understanding of what you want to learn next, and will have the necessary skills to continue on your learning journey. I have also provided additional resources on each week's course page in the "More Resources" section for you to explore further, though these are not expected or required for completion of this course.
+
+
+
+# Types of thinking we will use
+
+This course will build on your existing skills in the following types of thinking:
+
+- [Critical thinking](https://www.criticalthinking.org/pages/defining-critical-thinking/766)
+- [Systems thinking](https://thesystemsthinker.com/introduction-to-systems-thinking/)
+- [Spatial thinking](https://www.esri.com/news/arcwatch/0108/spatial-thinking.html)
+
+For an excellent primer on systems thinking, read [this great essay about Leverage Points](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/) by Donella Meadows (optional, not required).
+
+# What to do if you get stuck
+
+As you are working through the tutorials and on your final project, at some point your code is not going to work, or you will have trouble with GitHub, or you won't understand part of an assignment. This is normal, and part of doing any kind of data science!
+
+So what should you do if you get stuck?
+
+1. *Take a break*. It's easy to become glued to your computer when you are doing coding work, but your brain sometimes needs a break. Take at least a few minutes to do something completely different: get up and move around, do a little dance, call a friend to chat, drink a glass of water, fold some laundry, or anything else that lets your brain focus on something else. Then come back to your computer with fresh eyes and you may be able to find a way forward. 
+
+2. *Error messages/warnings*. If it's a problem with your code, look at the error messages in your console. The message may tell you the exact lines where the error is occuring, or it may tell you that something is missing, or that it doesn't recognize one of the functions you are using. 
+
+3. *Search the web*. If it's not clear to you what the problem is with your code, copy the message and paste it into your search browser. Other people have had the same problem before, and they have likely asked about it in forums where wonderful people help them understand. You may have to read several different web pages to find the answer to your problem. 
+
+If it's not a coding problem, but rather a concept you are unclear about, search the web and find more/different explanations! There are many informational blogs and videos that can help you understand. 
+
+4. *Ask the question on Slack*. We are using a Slack channel to communicate with the rest of the class. If you can't find the answer to your problem on your own (try for at least 10 minutes, but don't spend more than 30 minutes being stuck on your own), ask the question in Slack. Give as much context as you can; screenshots of your code and error messages are very helpful. The instructor, or one of your classmates, will try to help you as soon as possible. 
+
+Please check the Slack frequently! You will learn a lot more by seeing what other people are trying and what they are struggling with. If you have ideas to help them, please do so. The best way to learn something is to teach others, so helping your classmates will help you understand the material at a deeper and/or broader level. 
+
+5. *Bring your questions to Office Hours*. The office hours are a chance for you to get help with whatever you need related to the course: coding help, concept explanations, or project ideas. Please use them if you need help, or just want to talk things through. 
+
+# Assignment: Get your toolbox set up!
+
+Before the course starts, you will need to get all the necessary software installed and set up on your computer. Please follow the helpful instructions at this website (this was created for another course in our program, SDG Analytics in R, which I highly recommend if you enjoy this course and want to learn more): https://nsf-all-spice-alliance.github.io/SDG-Analytics-in-R/rmarkdowns/installation_guide.html
+
+Follow the instructions in the following sections:
+
+- Installing R and RStudio
+- Creating a GitHub account
+- Check for / Install Git | Link R Studio & Github
+
+IMPORTANT NOTE: 
+

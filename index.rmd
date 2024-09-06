@@ -1,0 +1,24 @@
+---
+output: html_document
+---
+
+
+
+
+
+<img src="`r here::here('logos/SDG-Analytics-in-R-Flyer-Fall-24.png')`" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

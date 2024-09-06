@@ -1,0 +1,29 @@
+name: "my-website"
+navbar:
+  title: "GIS for Sustainability and Resilience"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Logistics"
+      href: README.html
+    - text: "Course Intro"
+      href: rmarkdowns/Course_Intro.html
+    - text: "Installation Guide"
+      href: rmarkdowns/installation_guide.html
+    - text: "Intro to R"
+      href: rmarkdowns/intro_to_R.html
+    - text: "Week 1"
+      href: rmarkdowns/Week_1.html
+    - text: "Week 2"
+      href: rmarkdowns/Week_2.html
+    - text: "Week 3"
+      href: rmarkdowns/Week_3.html
+    - text: "Week 4"
+      href: rmarkdowns/machine_learning.html
+    - text: "Final Challenge Project"
+      href: rmarkdowns/Final_Challenge.html
+    - text: "Troubleshooting Guide"
+      href: rmarkdowns/troubleshooting.html
+
+
+    

@@ -1,0 +1,336 @@
+---
+title: "Week 1: Introduction to Concepts and Techniques"
+author: "Catherine Brockway"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly
+    toc: TRUE
+    toc_float: TRUE
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("vembedr")
+```
+
+<img src="`r here::here('Images/ALL-SPICE.png')`" width="240" /> <img src="`r here::here('Images/3_CIFAL.png')`" width="200" />
+
+# Welcome to Week 1 {-}
+
+Congratulations on starting the course! Before you tackle the assignments for Week 1, please make sure you have completed all the instructions under "Before the Course: Get your toolbox set up" on the Course Intro page. If you have any trouble getting R, RStudio, and GitHub set up, please reach out to the instructor immediately so that we can get you on track. 
+
+If you have completed the set up instructions in the Course Intro, please watch the video below, which gives a nice introduction to Systems Thinking, which is very helpful when using GIS for Sustainability and Resilience. 
+
+[Systems Thinking 101](https://www.youtube.com/watch?v=bNASybOzruM&t=218s)
+```{r}
+embed_url("https://www.youtube.com/watch?v=bNASybOzruM&t=218s")
+```
+
+# GIS for Sustainability and Resilience
+
+For an introduction to the ideas of sustainability and resilience, and how GIS can be used to help us understand them, please read the following short articles (you don't have to watch the embedded videos or follow the embedded links, but please do if they are of interest to you):
+
+[Resilience and Sustainability: the Definitions](https://www.esri.com/en-us/industries/blog/articles/resilience-and-sustainability-the-definitions/)
+
+[Resilience: a Sustainability Prerequisite](https://ian.umces.edu/blog/resilience-a-sustainability-prerequisite/)
+
+[Resilient and Sustainable Future with GIS](https://www.esri.com/en-us/industries/blog/articles/resilient-sustainable-future-with-gis/)
+
+
+# Getting started in R
+
+There are many GIS tools you can use to support sustainability and resilience. In this course, we are using R (and RStudio). There are many reasons for this choice, but some of the most important are:
+
+- It is free!!
+- It creates reproducible code that can be shared and validated
+- It can be used for all kinds of data analysis and visualization, not just spatial
+
+For a brief introduction to using R, please read Chapter 2: Introducing R and RStudio in the free ebook *Data Analysis and Processing with R based on IBIS data*.
+
+[Introducing R and RStudio](https://bookdown.org/kdonovan125/ibis_data_analysis_r4/introducing-r-and-rstudio.html) 
+
+Now, let's get started with some basics of using R.
+
+First, create a new R Markdown file and name it "GISSR_W1_Your_Name", using your own name. This is where you will follow the tutorials and complete the weekly challenges. The instructor will use this file to track your progress and see if you need help.
+
+## R Tutorial and Mini-challenges
+
+Follow the tutorial available here:
+[Intro to R](https://nsf-all-spice-alliance.github.io/SDG-Analytics-in-R/rmarkdowns/intro_to_R.html)
+
+The rmarkdown is available within this project: `intro_to_r.rmd`. 
+
+
+
+# Getting started with GIS in R
+
+Before we jump into doing GIS, it's important to understand some basics about what GIS is and how spatial data works.
+
+Watch this video from the GIS Lecture Series by Christopher McGinty at Utah State University. 
+
+```{r}
+embed_url("https://www.youtube.com/watch?v=FrTvGpK95U4&t=7s")
+```
+
+Please read the following short chapter in the free, online textbook *Intro to GIS and Spatial Analysis* by Manuel Gimond.
+
+[Chapter 1 Introduction to GIS](https://mgimond.github.io/Spatial/introGIS.html)
+
+Watch this video from the GIS Lecture Series by Christopher McGinty at Utah State University. 
+```{r}
+embed_url("https://www.youtube.com/watch?v=6KfbrjX_PHA&list=PLqISefT_qzxIncMoWqqDfER8bfZk4q0BE&index=9")
+```
+
+Please read the following short chapter in the free, online textbook *Intro to GIS and Spatial Analysis* by Manuel Gimond.
+
+[Chapter 2 Feature Representation](https://mgimond.github.io/Spatial/chp02_0.html)
+
+Watch this video from the GIS Lecture Series by Christopher McGinty at Utah State University. Keep in mind that in this course, we are focusing on vector data. In the future, we hope to offer a class that focuses on raster data.
+```{r}
+embed_url("https://www.youtube.com/watch?v=afHlxZaCyFw&list=PLqISefT_qzxIncMoWqqDfER8bfZk4q0BE&index=8")
+```
+
+Please read the following short chapter in the free, online textbook *Intro to GIS and Spatial Analysis* by Manuel Gimond.
+
+[Chapter 9 Coordinate Systems](https://mgimond.github.io/Spatial/symbolizing-features.html)
+
+
+
+# Assignment: Visualizing Spatial Data Tutorial
+
+This week's three tutorials and accompanying challenges will get you making maps, creating your own (small) datasets, and using APIs to retrieve data.
+
+Follow each tutorial below, and create a new R chunk in your new R Markdown file (that you created for the Intro to R tutorial above) for each chunk in the tutorial. You can copy and paste the code directly, but be sure to take the time to look at the code and try to understand what it is telling your computer to do. 
+If you have any questions, write them down and bring them to office hours so we can discuss, or you can include your questions in your RMarkdown file and push your code to our GitHub classroom (be sure to say in your commit message that you need help with a particular part or question!). 
+
+
+This tutorial will help you get started with basic mapping using the Rnaturalearth package. This packages allows us to retrieve data from [Natural Earth](https://www.naturalearthdata.com/), a free and open geospatial data repository with global coverage. 
+
+
+## Set up your environment
+
+First, you will need to install (if you haven't already) and load all the packages we use in this tutorial. 
+
+Packages required for this tutorial:
+
+- `tidyverse` (which includes `ggplot2`, more info available [here](https://www.tidyverse.org/))
+
+- `sf` (more info available [here](https://r-spatial.github.io/sf/index.html) and [here](https://r-spatial.github.io/sf/articles/sf1.html))
+
+- `rnaturalearth` (more info available[here](https://docs.ropensci.org/rnaturalearth/articles/rnaturalearth.html))
+
+- `rnaturalearthdata` (this provides more data, and higher resolution data)
+
+- `rnaturalearthhires` (this provides the highest resolution data, which is best for mapping small areas)
+
+Refer back to the [Welcome to R](https://nsf-all-spice-alliance.github.io/SDG-Analytics-in-R/rmarkdowns/intro_to_R.html) tutorial if you need a reminder on how to do this.  
+
+```{r}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(rnaturalearthhires)
+```
+
+
+# Create your first world map
+
+In the code chunk below, we are creating a spatial dataframe object of the countries of the world, at a medium resolution scale. We use the `ne_countries` function to retrieve data on countries from the Natural Earth data repository. 
+
+We are assigning the name `world` to this object. 
+
+In the second line, we are checking to see that the object is the correct "class" of object. Once you run the code chunk (using the green arrow at the top right of the code chunk), the output should read `[1] "sf" "data.frame"`, which tells us that the object named `world` is a simple features data frame, which is what we want!
+
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+```
+
+You should also see in your environment frame that there is now an object called `world` and it should have `242 obs.` (which stands for observations) `of 169 variables`. Click on the word `world` in your environment pane to see the data frame in its own tab within RStudio. You can see which countries are included (the rows of the dataframe) and which variables are included (the columns of the dataframe). We can now use this dataframe to make maps!
+
+The code chunk below uses the function `ggplot` to create a data visualization of our dataset. We have to tell R what dataset we want to use (`data = world`), and then we add a `+` to extend our function to a new line and tell R that we want a map (`geom_sf()`).
+```{r}
+ggplot(data = world) +
+    geom_sf()
+```
+
+It may not be fancy, but we made a map of the world! Now let's make some improvements.
+
+First, let's add a new line to our ggplot function that adds labels to our x and y axes, using `xlab` and `ylab`. Our x axis represents Longitude, and our y axis represents Latitude, so let's label them that way. Feel free to change the labels to another language if you want!
+
+(For world maps, people usually either know that the axes represent Latitude and Longitude, or they don't care. So we won't add it in the rest of our maps today, but you know how to for when it makes sense to include them.)
+```{r}
+ggplot(data = world) +
+    geom_sf() +
+    xlab("Longitude") + ylab("Latitude") 
+
+```
+
+Now let's add a title and subtitle to our map. 
+
+**Challenge 1: Change the subtitle in the code to your name instead of mine. Feel free to change the title and subtitle to another language!**
+
+```{r}
+ggplot(data = world) +
+    geom_sf() +
+    ggtitle("Countries of the World", subtitle = "Created by Catherine Brockway")
+
+```
+
+# Improve your world map
+
+## Remove data
+
+Let’s now remove Antarctica from our map, since it takes up a lot of space, and it's not a "country" per se. This is just an example of how to change your underlying data to alter a map. Whether or not to include Antarctica is a choice you will make for each world map depending on the purpose of the map. This is our first time cleaning our dataframe, and we are using a function from the `tidyverse` package called `filter`. 
+
+If you take another look at our `world` dataframe, there is a column called `iso_a3`. This column includes ISO alpha-3 (or 3 letter codes) for each country. You can read more about ISO alpha-3 codes [here](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3). The code for Antarctica is `ATA`, so we want to create a new dataframe that excludes the row that has `ATA` in the `iso_a3` column. To do this, we use the code `filter(iso_a3 != "ATA")`, where the `!=` means "is not".
+
+We are also using the `%>%` symbol for the first time, which is called a "pipe". You can learn more about how to use pipes [here](https://style.tidyverse.org/pipes.html). They are very useful for making complex changes to our dataframes, so we'll be using them a lot!
+
+The code chunk below will create a new dataframe called `world_without_antarctica` from our existing dataframe called `world`. Notice that in your environment pane, you now have a new object with one less observation than the original, but with the same number of variables.
+
+**Challenge 2: Instead of removing antarctica, remove Australia from the map**. Remember to change the name of the dataframe to something like `world_without_Australia`. 
+
+Nothing against Australia! We're just learning how to navigate dataframes and make choices about our maps.
+```{r}
+world_without_antarctica <- world %>% 
+  filter(iso_a3 != "ATA")
+```
+
+Then we create a new use of the `ggplot()` function that specifies our new dataframe without Antarctica. Notice this code is slightly different in terms of where the `data = world_without_antarctica` part shows up. This is one of many examples where there are multiple ways of doing the same thing in R. It's a matter of style, and you will develop your own preferred style as you learn more.
+
+```{r}
+ggplot() + 
+  geom_sf(data = world_without_antarctica)
+```
+
+
+Okay, now let's add in titles the way we learned about earlier for our new map. 
+
+```{r}
+ggplot() + 
+  geom_sf(data = world_without_antarctica) +
+    ggtitle("Countries of the World", subtitle = "without Antarctica")
+```
+
+## Map aesthetics
+
+Now let's work on making our map pretty with some colors. Inside our `geom_sf()` parentheses, we can add our own colors to our map. The argument `fill` add color to our polygons, and `color` is the color of our lines. `size` refers to the size of our lines. 
+
+The colors we are using here are what are known as "hex colors", because they are designated with 6 numbers (hexadecimal) after a `#` sign. This is how html (websites) code colors. Use [this site](https://www.color-hex.com/color-names.html) to find more colors and their hex codes. 
+
+**Challenge 3: Try out different colors on your map until you find a combination that you like.**
+```{r}
+ggplot() + 
+  geom_sf(data = world_without_antarctica, 
+          fill = "#669438", color = "#32481B", size = 0.25) +
+  ggtitle("Countries of the World", subtitle = "without Antarctica")
+```
+
+Now let's work on an important aspect of cartographic design: decluttering our map. Since we are just making a basic world map, let's get rid of the grid lines showing latitude and longitude and the box around our map. The easiest way to do this is to use a theme that is built in to the `ggplot2` package: `theme_void`.
+```{r}
+ggplot() + 
+  geom_sf(data = world_without_antarctica, 
+          fill = "#669438", color = "#32481B", size = 0.25) +
+  ggtitle("Countries of the World", subtitle = "without Antarctica")+
+  theme_void()
+```
+
+We can also use our variables (columns in our dataframe) to add color to each country. The Natural Earth dataset happens to come with some columns with a coloring scheme with 7–13 colors (mapcolor7, mapcolor9, etc.) so that no countries with a shared border share a color. We can "fill" our country polygons with colors using that column `mapcolor7`. 
+
+Notice that the `mapcolor7` column only provides numbers, so we need to add a color scale, or palette, to associate with the numbers. This is similar to what we will do when we start making choropleth maps using variables with data about countries. Since our data is categorical (also known as discrete or qualitative) in this case, we want to use a color palette that is designed for use with discrete data. 
+
+**Challenge 4: Try a few different discrete [color palettes](https://jmsallan.netlify.app/blog/the-brewer-palettes/) and choose one that you like.**
+
+We are using Brewer color palettes (created by Cynthia A. Brewer) in this class, which are designed specifically for map-making.
+
+To learn more about choosing color palettes in R, specifically using the `ggplot2` package, read [Chapter 11](https://ggplot2-book.org/scales-colour) in "ggplot2: Elegant Graphics for Data Analysis". 
+```{r}
+ggplot() + 
+  geom_sf(data = world_without_antarctica, 
+          aes(fill = as.factor(mapcolor7)),
+          color = "#401D16", size = 0.25) +
+  scale_fill_brewer(palette = "Set1") +
+  guides(fill = "none") +
+  theme_void()
+```
+
+## Changing your map CRS
+
+As a cartographer, you need to choose the best Coordinate Reference System (CRS) for your map. First, let's figure out what projection our current world map is in. This is the projection that is embedded in the Natural Earth data we retrieved. We use the `st_crs` function to see the current CRS. 
+
+```{r}
+st_crs(world_without_antarctica)
+```
+The output above shows that our current dataframe, `world_without_antarctica`, is in the WGS 84 CRS. If you check our original dataframe, `world`, you will see that it has the same CRS. 
+
+By default, the map will use the coordinate system of the first layer that defines one (i.e. scanned in the order provided), or if none, fall back on WGS84 (latitude/longitude, the reference system used in GPS).
+
+While choosing the right CRS can be complicated, changing the CRS in R is easy: add a `coord_sf()` layer where you specify the CRS you want to use, using the argument `crs`.
+
+Here’s the Robinson projection/CRS: 
+```{r}
+ggplot() + 
+  geom_sf(data = world_without_antarctica, 
+          fill = "#669438", color = "#32481B", size = 0.25) +
+  coord_sf(crs = st_crs("ESRI:54030")) +  # Robinson
+  # Or use the name instead of the number
+  # coord_sf(crs = "+proj=robin")
+  ggtitle("Countries of the World", subtitle = "Robinson Projection")+
+  theme_void()
+```
+What do you notice about the new map we made compared to the WGS 84 map?
+
+## Change the center of your map
+
+The Orthographic Azimuthal projection is a good option if you want to choose the center of your map, though you won't be able to see the other half of the world. For this, you will need to use a more complex bit of code for the `crs` argument, called a [PROJ4](https://proj.org/en/9.4/usage/projections.html) string. You will provide the `proj` alias, in this case `ortho`, and then the latitude (`lat_0`) and longitude (`lon_0`) of the "origin", or center, of your map. In the example below, I have centered the map on my hometown of Lubbock, Texas. 
+
+**Challenge 5: Look up the latitude and longitude of your hometown (or your current home), and change the PROJ4 string `lat_0` and `lon_0`. Then change the title to reflect the place you are centering.**
+```{r}
+ggplot(data = world) +
+  geom_sf(fill = "#669438", color = "#32481B", size = 0.25) +
+    coord_sf(crs = "+proj=ortho +lat_0=33 +lon_0=-101 ") +
+  ggtitle("Lubbock, TX as the Center of the World", subtitle = "Orthographic Azimuthal")+
+  theme_void()
+
+```
+
+
+Congratulations! You have completed all the assignments for Week 1!
+
+# More resources
+
+The resources in this section are not required for this course! They are provided in case you want to learn more. Feel free to come back to them after you finish the course.
+
+## More tutorials 
+
+This is a nice tutorial with a video to follow along. This tutorial requires you to download data that is provided in a .zip file. [Tutorial: Visualizing Spatial Data](https://datavizs23.classes.andrewheiss.com/example/12-example.html)
+
+More tutorials that I used to create this week's tutorial:
+
+[Drawing beautiful maps programmatically with R, sf and ggplot2 — Part 1: Basics](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+
+[Drawing beautiful maps programmatically with R, sf and ggplot2 — Part 2: Layers](https://r-spatial.org/r/2018/10/25/ggplot2-sf-2.html)
+
+[Drawing beautiful maps programmatically with R, sf and ggplot2 — Part 3: Layouts](https://r-spatial.org/r/2018/10/25/ggplot2-sf-3.html)
+
+## Cartography Resources
+
+Want to see what different projections look like compared to each other? Use this tool: [Projection comparison](https://observablehq.com/@d3/projection-comparison)
+
+List of projections available (and their aliases!) using PROJ4 strings in R: [Projections](https://proj.org/en/9.4/operations/projections/index.html)
+
+More about using PROJ4 strings: [Cartographic projection](https://proj.org/en/9.4/usage/projections.html)
+
+Brewer Color Palette Interactive: [Color Brewer 2.0](https://colorbrewer2.org/#type=qualitative&scheme=Accent&n=3)
+
+Need help determining the corners of your bounding box? Use this tool to draw your bounding box and get the locations of your corners. Just remember that in R, latitude and longitude is indicated as -90 to 90  and -180 to 180 for longitude
+
+## R Packages
+
+If you want to learn more about RMarkdown, start with this book (written using RMarkdown!): [RMarkdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/)
+
+If you want to learn more about doing non-spatial data science in R, this is the book to start with: [R for Data Science](https://r4ds.hadley.nz/)
